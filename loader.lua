@@ -170,6 +170,8 @@ SubTitlePadding.PaddingLeft = UDim.new(0, 5)
 SubTitlePadding.PaddingRight = UDim.new(0, 5)
 SubTitlePadding.PaddingTop = UDim.new(0, 2)
 
+Controls.Name = 'Controls'
+
 Close.Name = 'Close'
 Close.AnchorPoint = Vector2.new(1, 0)
 Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -363,5 +365,21 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 --- Titlebar Tools ---
-local minimized = false
+
+local WindowMinimized = false
+MinimizeImage.MouseButton1Click:Connect(function()
+	if not WindowMinimized then
+		WindowMinimized = true
+		Navigation.Visible = false
+		TitleLine.Visible = false
+		Background:TweenSize(UDim2.new(0, 500, 0, 42), Enum.EasingDirection.In, Enum.EasingStyle.Linear, 0.1)
+	else
+		WindowMinimized = false
+		Navigation.Visible = true
+		TitleLine.Visible = true
+		Background:TweenSize(UDim2.new(0, 675, 0, 424), Enum.EasingDirection.In, Enum.EasingStyle.Linear, 0.1)
+	end
+	print(WindowMinimized)
+end)
+
 
