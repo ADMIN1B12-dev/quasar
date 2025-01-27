@@ -2,7 +2,7 @@ local UserInputService = game:GetService('UserInputService')
 
 local Player = game.Players.LocalPlayer
 
-local CoreGui = game:GetService("CoreGui")
+local CoreGui = game:GetService('CoreGui')
 local PlayerGui = Player.PlayerGui
 
 local QuasarRunning = false
@@ -18,7 +18,7 @@ if PlayerGui:FindFirstChild('QuasarStatus') then
 	PlayerGui['QuasarStatus']:Destroy()
 end
 if CoreGui:FindFirstChild('QuasarMessage') then
-    CoreGui['QuasarMessage']:Destroy()
+	CoreGui['QuasarMessage']:Destroy()
 end
 
 local MainGui = Instance.new('ScreenGui', CoreGui)
@@ -65,6 +65,8 @@ local NavigationLine = Instance.new('Frame', Navigation)
 local NavigationTabs = Instance.new('ScrollingFrame', Navigation)
 local NavigationTabsList = Instance.new('UIListLayout', NavigationTabs)
 local NavigationTabsPadding = Instance.new('UIPadding', NavigationTabs)
+local Elements = Instance.new('Frame', Background)
+local ElementInteractions = Instance.new('Frame', Elements)
 
 --- Main Style ---
 
@@ -170,8 +172,6 @@ SubTitlePadding.PaddingLeft = UDim.new(0, 5)
 SubTitlePadding.PaddingRight = UDim.new(0, 5)
 SubTitlePadding.PaddingTop = UDim.new(0, 2)
 
-Controls.Name = 'Controls'
-
 Close.Name = 'Close'
 Close.AnchorPoint = Vector2.new(1, 0)
 Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -267,6 +267,29 @@ NavigationTabsPadding.PaddingLeft = UDim.new(0, 0)
 NavigationTabsPadding.PaddingRight = UDim.new(0, 0)
 NavigationTabsPadding.PaddingTop = UDim.new(0, 1)
 
+Elements.Name = 'Elements'
+Elements.AnchorPoint = Vector2.new(1, 1)
+Elements.BackgroundTransparency = 1
+Elements.BorderSizePixel = 0
+Elements.Position = UDim2.new(1, 0, 1, 0)
+Elements.Size = UDim2.new(1, -185, 1, -42)
+
+ElementInteractions.Name = 'Interactions'
+ElementInteractions.AnchorPoint = Vector2.new(0, 0)
+ElementInteractions.BackgroundTransparency = 1
+ElementInteractions.BorderSizePixel = 0
+ElementInteractions.Position = UDim2.new(0, 0, 0, 0)
+ElementInteractions.Size = UDim2.new(1, 0, 1, 0)
+ElementInteractions.ClipsDescendants = true
+
+--- Create Content ---
+
+function CreateTitle(title, parent)
+	
+end
+
+--- Create Tabs ---
+
 function CreateTab(icon, title, callback)
 	local Tab = Instance.new('Frame', NavigationTabs)
 	local TabCorner = Instance.new('UICorner', Tab)
@@ -320,13 +343,36 @@ function CreateTab(icon, title, callback)
 	TextLabel.TextSize = 16
 	TextLabel.TextStrokeTransparency = 1
 	TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	
+	Interact.MouseButton1Click:Connect(function()
+		callback()
+	end)
 
 end
 
-CreateTab('rbxassetid://9080449299', 'Home', '')
-CreateTab('http://www.roblox.com/asset/?id=6022668955', 'Auto Farm', '')
-CreateTab('http://www.roblox.com/asset/?id=6034767621', 'Items', '')
-CreateTab('http://www.roblox.com/asset/?id=6034509993', 'Misc', '')
+local ActiveTab = ''
+
+function LoadTabContent(tab)
+	if ActiveTab ~= '' then
+		NavigationTabs[ActiveTab].BackgroundTransparency = 1
+		NavigationTabs[ActiveTab].UIStroke.Transparency = 1
+	end
+	
+	local Tab = NavigationTabs:FindFirstChild(tab)
+	ActiveTab = tab
+	
+	Tab.BackgroundTransparency = 0
+	Tab.UIStroke.Transparency = 0
+	
+	
+end
+
+CreateTab('rbxassetid://9080449299', 'Home', function() LoadTabContent('Home') end)
+CreateTab('http://www.roblox.com/asset/?id=6022668955', 'Auto Farm', function() LoadTabContent('Auto Farm') end)
+CreateTab('http://www.roblox.com/asset/?id=6034767621', 'Items', function() LoadTabContent('Items') end)
+CreateTab('http://www.roblox.com/asset/?id=6034509993', 'Misc', function() LoadTabContent('Misc') end)
+
+LoadTabContent('Home')
 
 --- Drag ---
 
@@ -365,7 +411,6 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 --- Titlebar Tools ---
-
 local WindowMinimized = false
 MinimizeImage.MouseButton1Click:Connect(function()
 	if not WindowMinimized then
@@ -381,5 +426,3 @@ MinimizeImage.MouseButton1Click:Connect(function()
 	end
 	print(WindowMinimized)
 end)
-
-
