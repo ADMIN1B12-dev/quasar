@@ -1,4 +1,5 @@
 local UserInputService = game:GetService('UserInputService')
+local TweenService = game:GetService('TweenService')
 
 local Player = game.Players.LocalPlayer
 
@@ -67,6 +68,7 @@ local NavigationTabsList = Instance.new('UIListLayout', NavigationTabs)
 local NavigationTabsPadding = Instance.new('UIPadding', NavigationTabs)
 local Elements = Instance.new('Frame', Background)
 local ElementInteractions = Instance.new('Frame', Elements)
+local ElementsLayout = Instance.new('UIPageLayout', ElementInteractions)
 
 --- Main Style ---
 
@@ -282,6 +284,18 @@ ElementInteractions.Position = UDim2.new(0, 0, 0, 0)
 ElementInteractions.Size = UDim2.new(1, 0, 1, 0)
 ElementInteractions.ClipsDescendants = true
 
+ElementsLayout.Name = 'UIPageLayout'
+ElementsLayout.Animated = true
+ElementsLayout.Circular = true
+ElementsLayout.EasingDirection = Enum.EasingDirection.Out
+ElementsLayout.EasingStyle = Enum.EasingStyle.Exponential
+ElementsLayout.Padding = UDim.new(0, 0)
+ElementsLayout.TweenTime = 0.4
+ElementsLayout.FillDirection = Enum.FillDirection.Vertical
+ElementsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ElementsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+ElementsLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+
 --- Create Content ---
 
 function CreateTitle(title, parent)
@@ -354,14 +368,14 @@ local ActiveTab = ''
 
 function LoadTabContent(tab)
 	if ActiveTab ~= '' then
-		NavigationTabs[ActiveTab].BackgroundTransparency = 1
+		TweenService:Create(NavigationTabs[ActiveTab], TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 1}):Play()
 		NavigationTabs[ActiveTab].UIStroke.Transparency = 1
 	end
 	
 	local Tab = NavigationTabs:FindFirstChild(tab)
 	ActiveTab = tab
 	
-	Tab.BackgroundTransparency = 0
+	TweenService:Create(Tab, TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 0.41}):Play()
 	Tab.UIStroke.Transparency = 0
 	
 	
@@ -411,7 +425,9 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 --- Titlebar Tools ---
+
 local WindowMinimized = false
+
 MinimizeImage.MouseButton1Click:Connect(function()
 	if not WindowMinimized then
 		WindowMinimized = true
@@ -424,5 +440,4 @@ MinimizeImage.MouseButton1Click:Connect(function()
 		TitleLine.Visible = true
 		Background:TweenSize(UDim2.new(0, 675, 0, 424), Enum.EasingDirection.In, Enum.EasingStyle.Linear, 0.1)
 	end
-	print(WindowMinimized)
 end)
